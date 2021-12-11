@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using TeardownModManager;
 
@@ -23,17 +20,21 @@ namespace Teardown.Classes
             Utils.Logger.Debug("internal ModsFile Read()");
             base.Read();
             var root = _XmlDocument.DocumentElement;
+
             if (root.Name != "mods")
             {
                 throw new Exception("Invalid mods file! (Could not find root node named \"mods\")");
             }
+
             version = Version.Parse(root.Attributes["version"].Value);
             entries = new HashSet<ModsFileEntry>();
+
             foreach (XmlNode node in root.ChildNodes)
             {
                 var entry = node.Parse();
                 if (entry != null) entries.Add(entry);
             }
+
             Utils.Logger.Info($"Loaded {file.FullName.Quote()} (v{version}) with {entries.Count} mods.");
             return this;
         }
@@ -47,9 +48,11 @@ namespace Teardown.Classes
                     return entry;
                 }
             }
+
             return null;
         }
     }
+
     public enum ModType
     {
         Unknown,
@@ -62,11 +65,10 @@ namespace Teardown.Classes
         public XmlNode Node;
         public string Fullname = "<UNKOWN>";
         public string Id = "<UNKNOWN>";
-        public bool Active = false;
+        public bool Active;
         public DateTimeOffset? LastEnabled;
         public DateTimeOffset? LastSubscribed;
         public ModType Type = ModType.Unknown;
-
     }
     public static class ModsFileEntryExtensions
     {
@@ -75,12 +77,15 @@ namespace Teardown.Classes
             if (node.Name != "mod") return null;
             var entry = new ModsFileEntry();
             var _name = node.Attributes["id"];
+
             if (_name != null)
             {
                 entry.Fullname = _name.Value;
+
                 if (entry.Fullname.Contains("-"))
                 {
                     var name = entry.Fullname.ToLowerInvariant();
+
                     if (name.StartsWith("steam-"))
                     {
                         entry.Type = ModType.Steam;
@@ -103,25 +108,31 @@ namespace Teardown.Classes
                     // entry.id = entry.fullname.Split(new string[] { " - " }, 2, StringSplitOptions.None)[1];
                 }
             }
+
             if (node.Attributes["active"] != null) entry.Node = node;
+
             if (node.Attributes["seltime"] != null)
             {
                 var val = node.Attributes["seltime"].Value;
+
                 try
                 {
                     entry.LastEnabled = DateTimeOffset.FromUnixTimeSeconds(long.Parse(val));
                 }
                 catch (FormatException ex) { Utils.Logger.Error($"Could not parse \"seltime={val}\" of mod {entry.Fullname}: {ex.Message}"); }
             }
+
             if (node.Attributes["subtime"] != null)
             {
                 var val = node.Attributes["subtime"].Value;
+
                 try
                 {
                     entry.LastSubscribed = DateTimeOffset.FromUnixTimeSeconds(long.Parse(val));
                 }
                 catch (FormatException ex) { Utils.Logger.Error($"Could not parse \"subtime={val}\" of mod {entry.Fullname}: {ex.Message}"); }
             }
+
             return entry;
         }
     }

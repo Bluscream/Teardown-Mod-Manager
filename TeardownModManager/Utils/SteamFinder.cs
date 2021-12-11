@@ -32,13 +32,11 @@ namespace VRCModManager.Dependencies
                     break;
 
                 default:
-                    if (IsUnix())
-                        SteamPath = FindUnixSteamPath();
+                    if (IsUnix()) SteamPath = FindUnixSteamPath();
                     break;
             }
 
-            if (SteamPath == null)
-                return false;
+            if (SteamPath == null) return false;
 
             return FindLibraries();
         }
@@ -57,12 +55,10 @@ namespace VRCModManager.Dependencies
             foreach (var library in Libraries)
             {
                 var gameManifestPath = GetManifestFilePath(library, appId);
-                if (gameManifestPath == null)
-                    continue;
+                if (gameManifestPath == null) continue;
 
                 var gameFolderName = ReadInstallDirFromManifest(gameManifestPath);
-                if (gameFolderName == null)
-                    continue;
+                if (gameFolderName == null) continue;
 
                 return Path.Combine(library, "common", gameFolderName);
             }
@@ -87,15 +83,15 @@ namespace VRCModManager.Dependencies
                 var folder = Directory.EnumerateDirectories(library)
                     .FirstOrDefault(f => Path.GetFileName(f).ToLowerInvariant() == gameFolderName);
 
-                if (folder != null)
-                    yield return folder;
+                if (folder != null) yield return folder;
             }
         }
 
-        private bool FindLibraries()
+        bool FindLibraries()
         {
             var steamLibraries = new List<string>();
             var steamDefaultLibrary = Path.Combine(SteamPath, "steamapps");
+
             if (!Directory.Exists(steamDefaultLibrary))
                 return false;
 
@@ -113,17 +109,18 @@ namespace VRCModManager.Dependencies
              */
             var regex = new Regex(@"""\d+""\s+""(.+)""");
             var libraryFoldersFilePath = Path.Combine(steamDefaultLibrary, "libraryfolders.vdf");
+
             if (File.Exists(libraryFoldersFilePath))
             {
                 foreach (var line in File.ReadAllLines(libraryFoldersFilePath))
                 {
                     var match = regex.Match(line);
-                    if (!match.Success)
-                        continue;
+                    if (!match.Success) continue;
 
                     var libPath = match.Groups[1].Value;
                     libPath = libPath.Replace("\\\\", "\\"); // unescape the backslashes
                     libPath = Path.Combine(libPath, "steamapps");
+
                     if (Directory.Exists(libPath))
                         steamLibraries.Add(libPath);
                 }
@@ -133,23 +130,24 @@ namespace VRCModManager.Dependencies
             return true;
         }
 
-        private static string GetManifestFilePath(string libraryPath, int appId)
+        static string GetManifestFilePath(string libraryPath, int appId)
         {
             var manifestPath = Path.Combine(libraryPath, $"appmanifest_{appId}.acf");
+
             if (File.Exists(manifestPath))
                 return manifestPath;
             else
                 return null;
         }
 
-        private static string ReadInstallDirFromManifest(string manifestFilePath)
+        static string ReadInstallDirFromManifest(string manifestFilePath)
         {
             var regex = new Regex(@"""installdir""\s+""(.+)""");
+
             foreach (var line in File.ReadAllLines(manifestFilePath))
             {
                 var match = regex.Match(line);
-                if (!match.Success)
-                    continue;
+                if (!match.Success) continue;
 
                 return match.Groups[1].Value;
             }
@@ -157,24 +155,25 @@ namespace VRCModManager.Dependencies
             return null;
         }
 
-        private static string FindWindowsSteamPath()
+        static string FindWindowsSteamPath()
         {
             var regPath = Environment.Is64BitOperatingSystem
                  ? @"SOFTWARE\Wow6432Node\Valve\Steam"
                  : @"SOFTWARE\Valve\Steam";
+
             var subRegKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(regPath);
+
             var path = subRegKey?.GetValue("InstallPath").ToString()
                 .Replace('/', '\\'); // not actually required, just for consistency's sake
 
-            if (Directory.Exists(path))
-                return path;
-            else
-                return null;
+            if (Directory.Exists(path)) return path;
+            else return null;
         }
 
-        private static string FindUnixSteamPath()
+        static string FindUnixSteamPath()
         {
             string path = null;
+
             if (Directory.Exists(path = GetDefaultLinuxSteamPath())
                 || Directory.Exists(path = GetDefaultMacOsSteamPath()))
             {
@@ -184,7 +183,7 @@ namespace VRCModManager.Dependencies
             return null;
         }
 
-        private static string GetDefaultLinuxSteamPath()
+        static string GetDefaultLinuxSteamPath()
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Personal),
@@ -192,7 +191,7 @@ namespace VRCModManager.Dependencies
             );
         }
 
-        private static string GetDefaultMacOsSteamPath()
+        static string GetDefaultMacOsSteamPath()
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Personal),
@@ -201,7 +200,7 @@ namespace VRCModManager.Dependencies
         }
 
         // https://stackoverflow.com/questions/5116977
-        private static bool IsUnix()
+        static bool IsUnix()
         {
             var p = (int)Environment.OSVersion.Platform;
             return p == 4 || p == 6 || p == 128;

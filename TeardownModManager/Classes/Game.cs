@@ -1,5 +1,4 @@
-﻿using TeardownModManager;
-using Steam.Classes;
+﻿using Steam.Classes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using Teardown.Classes;
+using TeardownModManager;
 
 namespace Teardown
 {
@@ -47,8 +47,7 @@ namespace Teardown
         public const int SteamAppId = 1167630;
         public const string AppFileName = "teardown.exe";
 
-        public List<Process> Processes
-        { get { return Binaries.Main.Processes; } }
+        public List<Process> Processes => Binaries.Main.Processes;
         public Binaries Binaries { get; set; } = new Binaries();
 
         public DirectoryInfo BasePath { get; set; }
@@ -79,31 +78,31 @@ namespace Teardown
             };
             // Utils.Logger.Info(ModDirs.ToJson(true));
             foreach (var modDir in ModDirs)
-            {
 
                 Mods.AddRange(LoadMods(modDir.Value, modDir.Key));
-            }
+
+
             Utils.Logger.Info(Mods.ToJson(true));
         }
 
-        public bool Running()
-        {
-            return (Binaries.Main.Running());
-        }
+        public bool Running() => (Binaries.Main.Running());
 
         public List<Mod> LoadMods(DirectoryInfo modsDir, ModType type = ModType.Unknown)
         {
             var mods = new List<Mod>();
+
             if (!modsDir.Exists)
             {
                 Utils.Logger.Warn($"Mods directory {modsDir.FullName} does not exist");
                 return mods;
             }
+
             foreach (var modDir in Directory.GetDirectories(modsDir.FullName))
             {
                 var mod = new Mod(this, new DirectoryInfo(modDir), type);
                 if (mod.SteamWorkshopId != "386670448") mods.Add(mod);
             }
+
             return mods;
         }
 
@@ -118,15 +117,18 @@ namespace Teardown
             Console.WriteLine(response.Content);
             */
             var parsedResponse = await Steam.Utils.GetPublishedFileDetailsAsync(webClient, fileIds);
+
             foreach (var details in parsedResponse.response.publishedfiledetails)
             {
                 Mods.Where(t => t.SteamWorkshopId == details.publishedfileid).First().Details = details;
             }
+
             try
             {
                 OnDetailsLoaded?.Invoke(this);
             }
             catch (Exception ex) { Console.WriteLine("[ERROR] UpdateModDetailsAsync: {0}", ex.Message); }
+
             return parsedResponse;
         }
     }

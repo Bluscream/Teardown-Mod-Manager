@@ -29,30 +29,31 @@ namespace TeardownModManager
               propertyInfo => Extensions.ConvertPropertyToDictionary(propertyInfo, instanceToConvert));
         }
 
-        private static object ConvertPropertyToDictionary(PropertyInfo propertyInfo, object owner)
+        static object ConvertPropertyToDictionary(PropertyInfo propertyInfo, object owner)
         {
-            Type propertyType = propertyInfo.PropertyType;
-            object propertyValue = propertyInfo.GetValue(owner);
+            var propertyType = propertyInfo.PropertyType;
+            var propertyValue = propertyInfo.GetValue(owner);
 
             // If property is a collection don't traverse collection properties but the items instead
             if (!propertyType.Equals(typeof(string)) && (typeof(ICollection<>).Name.Equals(propertyValue.GetType().BaseType.Name) || typeof(Collection<>).Name.Equals(propertyValue.GetType().BaseType.Name)))
             {
                 var collectionItems = new List<Dictionary<string, object>>();
                 var count = (int)propertyType.GetProperty("Count").GetValue(propertyValue);
-                PropertyInfo indexerProperty = propertyType.GetProperty("Item");
+                var indexerProperty = propertyType.GetProperty("Item");
 
                 // Convert collection items to dictionary
                 for (var index = 0; index < count; index++)
                 {
-                    object item = indexerProperty.GetValue(propertyValue, new object[] { index });
-                    PropertyInfo[] itemProperties = item.GetType().GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+                    var item = indexerProperty.GetValue(propertyValue, new object[] { index });
+                    var itemProperties = item.GetType().GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 
                     if (itemProperties.Any())
                     {
-                        Dictionary<string, object> dictionary = itemProperties
+                        var dictionary = itemProperties
                           .ToDictionary(
                             subtypePropertyInfo => subtypePropertyInfo.Name,
                             subtypePropertyInfo => Extensions.ConvertPropertyToDictionary(subtypePropertyInfo, item));
+
                         collectionItems.Add(dictionary);
                     }
                 }
@@ -66,7 +67,8 @@ namespace TeardownModManager
                 return propertyValue;
             }
 
-            PropertyInfo[] properties = propertyType.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            var properties = propertyType.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+
             if (properties.Any())
             {
                 return properties.ToDictionary(
@@ -98,10 +100,11 @@ namespace TeardownModManager
         public static DirectoryInfo Combine(this DirectoryInfo dir, params string[] paths)
         {
             var final = dir.FullName;
+
             foreach (var path in paths)
-            {
                 final = Path.Combine(final, path);
-            }
+
+
             return new DirectoryInfo(final);
         }
 
@@ -112,20 +115,22 @@ namespace TeardownModManager
         public static FileInfo CombineFile(this DirectoryInfo dir, params string[] paths)
         {
             var final = dir.FullName;
+
             foreach (var path in paths)
-            {
                 final = Path.Combine(final, path);
-            }
+
+
             return new FileInfo(final);
         }
 
         public static FileInfo Combine(this FileInfo file, params string[] paths)
         {
             var final = file.DirectoryName;
+
             foreach (var path in paths)
-            {
                 final = Path.Combine(final, path);
-            }
+
+
             return new FileInfo(final);
         }
 
@@ -186,10 +191,7 @@ namespace TeardownModManager
             return source?.IndexOf(toCheck, comp) >= 0;
         }
 
-        public static bool IsNullOrEmpty(this string source)
-        {
-            return string.IsNullOrEmpty(source);
-        }
+        public static bool IsNullOrEmpty(this string source) => string.IsNullOrEmpty(source);
 
         public static string[] Split(this string source, string split, int count = -1, StringSplitOptions options = StringSplitOptions.None)
         {
@@ -217,25 +219,13 @@ namespace TeardownModManager
             return result;
         }
 
-        public static string Ext(this string text, string extension)
-        {
-            return text + "." + extension;
-        }
+        public static string Ext(this string text, string extension) => text + "." + extension;
 
-        public static string Quote(this string text)
-        {
-            return SurroundWith(text, "\"");
-        }
+        public static string Quote(this string text) => SurroundWith(text, "\"");
 
-        public static string Enclose(this string text)
-        {
-            return SurroundWith(text, "(", ")");
-        }
+        public static string Enclose(this string text) => SurroundWith(text, "(", ")");
 
-        public static string Brackets(this string text)
-        {
-            return SurroundWith(text, "[", "]");
-        }
+        public static string Brackets(this string text) => SurroundWith(text, "[", "]");
 
         public static string SurroundWith(this string text, string surrounds)
         {
@@ -265,13 +255,13 @@ namespace TeardownModManager
         {
             if (nvc == null) return string.Empty;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             foreach (string key in nvc.Keys)
             {
                 if (string.IsNullOrWhiteSpace(key)) continue;
 
-                string[] values = nvc.GetValues(key);
+                var values = nvc.GetValues(key);
                 if (values == null) continue;
 
                 foreach (string value in values)
@@ -306,7 +296,7 @@ namespace TeardownModManager
 
         public static T PopAt<T>(this List<T> list, int index)
         {
-            T r = list.ElementAt<T>(index);
+            var r = list.ElementAt<T>(index);
             list.RemoveAt(index);
             return r;
         }
@@ -315,17 +305,19 @@ namespace TeardownModManager
 
         #region Uri
 
-        private static readonly Regex QueryRegex = new Regex(@"[?&](\w[\w.]*)=([^?&]+)");
+        static readonly Regex QueryRegex = new Regex(@"[?&](\w[\w.]*)=([^?&]+)");
 
         public static IReadOnlyDictionary<string, string> ParseQueryString(this Uri uri)
         {
             var match = QueryRegex.Match(uri.PathAndQuery);
             var paramaters = new Dictionary<string, string>();
+
             while (match.Success)
             {
                 paramaters.Add(match.Groups[1].Value, match.Groups[2].Value);
                 match = match.NextMatch();
             }
+
             return paramaters;
         }
 
@@ -335,20 +327,20 @@ namespace TeardownModManager
 
         public static string GetDescription(this Enum value)
         {
-            Type type = value.GetType();
-            string name = Enum.GetName(type, value);
+            var type = value.GetType();
+            var name = Enum.GetName(type, value);
+
             if (name != null)
             {
-                FieldInfo field = type.GetField(name);
+                var field = type.GetField(name);
+
                 if (field != null)
                 {
-                    DescriptionAttribute attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
-                    if (attr != null)
-                    {
-                        return attr.Description;
-                    }
+                    var attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+                    if (attr != null) return attr.Description;
                 }
             }
+
             return null;
         }
 
@@ -356,10 +348,12 @@ namespace TeardownModManager
         {
             var type = typeof(T);
             if (!type.IsEnum) throw new InvalidOperationException();
+
             foreach (var field in type.GetFields())
             {
                 var attribute = Attribute.GetCustomAttribute(field,
                     typeof(DescriptionAttribute)) as DescriptionAttribute;
+
                 if (attribute != null)
                 {
                     if (attribute.Description == description)
@@ -371,6 +365,7 @@ namespace TeardownModManager
                         return (T)field.GetValue(null);
                 }
             }
+
             if (returnDefault) return default(T);
             else throw new ArgumentException("Not found.", "description");
         }
@@ -384,6 +379,7 @@ namespace TeardownModManager
             using (var timeoutCancellationTokenSource = new CancellationTokenSource())
             {
                 var completedTask = await Task.WhenAny(task, Task.Delay(timeout, timeoutCancellationTokenSource.Token));
+
                 if (completedTask == task)
                 {
                     timeoutCancellationTokenSource.Cancel();

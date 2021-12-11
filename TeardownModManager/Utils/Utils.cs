@@ -13,14 +13,19 @@ namespace TeardownModManager
     {
         public static partial class Logger
         {
-            private static readonly NLog.Logger NLogger = NLog.LogManager.GetCurrentClassLogger();
+            static readonly NLog.Logger NLogger = NLog.LogManager.GetCurrentClassLogger();
             public static void Debug(string format, params object[] arg) => Log(NLog.LogLevel.Debug, format, arg);
+
             public static void Info(string format, params object[] arg) => Log(NLog.LogLevel.Info, format, arg);
+
             public static void Warn(string format, params object[] arg) => Log(NLog.LogLevel.Warn, format, arg);
+
             public static void Error(string format, params object[] arg) => Log(NLog.LogLevel.Error, format, arg);
+
             public static void Log(NLog.LogLevel logLevel, string format, params object[] arg)
             {
                 NLogger.Log(logLevel, format, arg);
+
                 if (Debugger.IsAttached)
                 {
                     // Console.WriteLine($"[{DateTime.Now}] <{logLevel}> {format}");
@@ -54,11 +59,8 @@ namespace TeardownModManager
 
         public static bool IsAlreadyRunning(string appName)
         {
-            System.Threading.Mutex m = new System.Threading.Mutex(false, appName);
-            if (m.WaitOne(1, false) == false)
-            {
-                return true;
-            }
+            var m = new System.Threading.Mutex(false, appName);
+            if (m.WaitOne(1, false) == false) return true;
             return false;
         }
 
@@ -72,12 +74,13 @@ namespace TeardownModManager
         public static void RestartAsAdmin(string[] arguments)
         {
             if (IsAdmin()) return;
-            ProcessStartInfo proc = new ProcessStartInfo();
+            var proc = new ProcessStartInfo();
             proc.UseShellExecute = true;
             proc.WorkingDirectory = Environment.CurrentDirectory;
             proc.FileName = Assembly.GetEntryAssembly().CodeBase;
             proc.Arguments += arguments.ToString();
             proc.Verb = "runas";
+
             try
             {
                 /*new Thread(() =>
@@ -99,10 +102,11 @@ namespace TeardownModManager
         internal static bool IsAdmin()
         {
             bool isAdmin;
+
             try
             {
-                WindowsIdentity user = WindowsIdentity.GetCurrent();
-                WindowsPrincipal principal = new WindowsPrincipal(user);
+                var user = WindowsIdentity.GetCurrent();
+                var principal = new WindowsPrincipal(user);
                 isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
             }
             catch (UnauthorizedAccessException)
@@ -113,6 +117,7 @@ namespace TeardownModManager
             {
                 isAdmin = false;
             }
+
             return isAdmin;
         }
 
@@ -149,15 +154,17 @@ namespace TeardownModManager
 
         public static Process StartProcess(string file, string workDir = null, params string[] args)
         {
-            ProcessStartInfo proc = new ProcessStartInfo();
+            var proc = new ProcessStartInfo();
             proc.FileName = file;
             proc.Arguments = string.Join(" ", args);
             Console.WriteLine(proc.FileName + " " + proc.Arguments);
+
             if (workDir != null)
             {
                 proc.WorkingDirectory = workDir;
                 Console.WriteLine("WorkingDirectory: " + proc.WorkingDirectory);
             }
+
             return Process.Start(proc);
         }
     }

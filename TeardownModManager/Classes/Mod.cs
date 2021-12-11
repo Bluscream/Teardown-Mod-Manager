@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Steam.Classes;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,14 +10,13 @@ using TeardownModManager;
 
 namespace Teardown
 {
-
     /// <summary>
     ///
     /// </summary>
     public class Mod
     {
         [JsonIgnore]
-        private Game Game { get; set; }
+        Game Game { get; set; }
         public DirectoryInfo Directory { get; set; }
         public ModsFileEntry ModsFileEntry { get; set; }
         public ModInfoFile ModInfoFile { get; set; }
@@ -61,13 +59,7 @@ namespace Teardown
             }
         }
         public ModType Type { get; set; }
-        public bool Disabled
-        {
-            get
-            {
-                return ModsFileEntry?.Active ?? true;
-            }
-        }
+        public bool Disabled => ModsFileEntry?.Active ?? true;
         public Publishedfiledetail Details { get; set; }
 
         public HashSet<string> Tags = new HashSet<string>();
@@ -82,35 +74,39 @@ namespace Teardown
             Directory = directory;
             Game = game;
             var infoFile = directory.CombineFile("info.txt");
+
             if (infoFile.Exists)
             {
                 ModInfoFile = new ModInfoFile(infoFile);
             }
+
             Type = type;
+
             if (Type == ModType.Unknown)
             {
                 if (directory.Parent == game.ModDirs[ModType.Steam]) Type = ModType.Steam;
                 else if (directory.Parent == game.ModDirs[ModType.Local]) Type = ModType.Local;
                 else if (directory.Parent == game.ModDirs[ModType.BuiltIn]) Type = ModType.BuiltIn;
             }
+
             ModsFileEntry = game.ModsXML.getMod(Directory.Name, Type);
             // generate tags from infofile and steam
             Tags = new HashSet<string>();
+
             if (ModInfoFile != null)
             {
                 foreach (var tag in ModInfoFile.Tags)
-                {
                     Tags.Add(tag);
-                }
+
             }
+
             if (Details != null && Details.tags is null)
             {
-
                 foreach (var tag in Details.tags)
-                {
                     Tags.Add(tag.tag);
-                }
+
             }
+
             Utils.Logger.Debug($"New Mod: {this.ToJson(true)}");
         }
 
@@ -123,9 +119,6 @@ namespace Teardown
             return Details;
         }
 
-        public override string ToString()
-        {
-            return Name;
-        }
+        public override string ToString() => Name;
     }
 }

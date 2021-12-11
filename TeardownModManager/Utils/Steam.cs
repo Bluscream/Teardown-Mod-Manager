@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using TeardownModManager;
 using Steam.Classes;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using TeardownModManager;
 
 namespace Steam.Classes
 {
@@ -33,9 +33,8 @@ namespace Steam
 {
     public static class Utils
     {
-        private static FileInfo cacheFile = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).CombineFile("steam.cache.json");
-        private static Cache cache;
-
+        static FileInfo cacheFile = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).CombineFile("steam.cache.json");
+        static Cache cache;
 
         public static async Task<GetPublishedFileDetailsResponse> GetPublishedFileDetailsAsync(HttpClient webClient, Teardown.Mod Mod) => await GetPublishedFileDetailsAsync(webClient, Mod.SteamWorkshopId);
 
@@ -48,6 +47,7 @@ namespace Steam
             var parsedResponse = new GetPublishedFileDetailsResponse();
             if (fileIds.Count < 1) return parsedResponse;
             CheckCache();
+
             if (cacheFile.Exists && (!cacheFile.LastWriteTime.ExpiredSince(10)))
             {
                 foreach (var fileId in fileIds)
@@ -55,9 +55,11 @@ namespace Steam
                     var item = cache.FileDetails.FirstOrDefault(x => x.publishedfileid == fileId);
                     if (item != null) parsedResponse.response.publishedfiledetails.Add(item);
                 }
+
                 if (parsedResponse.response.publishedfiledetails.Count >= fileIds.Count)
                     return parsedResponse;
             }
+
             /*SteamRequest request = new SteamRequest("ISteamRemoteStorage/GetPublishedFileDetails/v1/");
             request.AddParameter("itemcount", fileIds.Count);
             request.AddParameter("publishedfileids", fileIds.ToArray());
@@ -65,17 +67,20 @@ namespace Steam
             Console.WriteLine(response.Content);
             */
             var values = new Dictionary<string, string> { { "itemcount", fileIds.Count.ToString() } };
+
             for (int i = 0; i < fileIds.Count; i++)
-            {
                 values.Add($"publishedfileids[{i}]", fileIds[i].ToString());
-            }
+
+
             var content = new FormUrlEncodedContent(values);
             var url = new Uri("https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/");
             Console.WriteLine($"[Steam] POST to {url} with payload {content.ToJson(false)} and values {values.ToJson(false)}");
             var response = await webClient.PostAsync(url, content);
             var responseString = await response.Content.ReadAsStringAsync();
+
             try { parsedResponse = JsonConvert.DeserializeObject<GetPublishedFileDetailsResponse>(responseString); }
             catch (Exception ex) { Console.WriteLine($"[Steam] Could not deserialize response ({ex.Message})\n{responseString}"); } // {response.ReasonPhrase} ({response.StatusCode})\n
+
             if (parsedResponse != null)
             {
                 foreach (var item in parsedResponse.response.publishedfiledetails)
@@ -84,11 +89,12 @@ namespace Steam
                     cache.FileDetails.Add(CacheFileDetail.FromPublishedfiledetail(item));
                 }
             }
+
             File.WriteAllText(cacheFile.FullName, JsonConvert.SerializeObject(cache));
             return parsedResponse;
         }
 
-        private static void CheckCache()
+        static void CheckCache()
         {
             if (cache is null)
             {

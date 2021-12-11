@@ -12,18 +12,18 @@ namespace TeardownModManager.UI
         public StackPanel() : base()
         {
             InitializeComponent();
-            this.ForceAutoresizeOfControls = true;
+            ForceAutoresizeOfControls = true;
         }
 
-        private void InitializeComponent()
+        void InitializeComponent()
         {
-            this.SuspendLayout();
+            SuspendLayout();
             //
             // StackPanel
             //
-            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.WrapContents = false;
-            this.ResumeLayout(false);
+            AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            WrapContents = false;
+            ResumeLayout(false);
         }
 
         /// <summary>
@@ -58,27 +58,29 @@ namespace TeardownModManager.UI
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
-            this.SuspendLayout();
+            SuspendLayout();
+
             switch (FlowDirection)
             {
                 case FlowDirection.BottomUp:
                 case FlowDirection.TopDown:
-                    foreach (Control control in this.Controls)
+                    foreach (Control control in Controls)
                         if (ForceAutoresizeOfControls || control.AutoSize)
-                            control.Width = this.ClientSize.Width - control.Margin.Left - control.Margin.Right;
+                            control.Width = ClientSize.Width - control.Margin.Left - control.Margin.Right;
                     break;
 
                 case FlowDirection.LeftToRight:
                 case FlowDirection.RightToLeft:
-                    foreach (Control control in this.Controls)
+                    foreach (Control control in Controls)
                         if (ForceAutoresizeOfControls || control.AutoSize)
-                            control.Height = this.ClientSize.Height - control.Margin.Top - control.Margin.Bottom;
+                            control.Height = ClientSize.Height - control.Margin.Top - control.Margin.Bottom;
                     break;
 
                 default:
                     break;
             }
-            this.ResumeLayout();
+
+            ResumeLayout();
         }
 
         protected override void OnLayout(LayoutEventArgs levent)
@@ -87,19 +89,20 @@ namespace TeardownModManager.UI
 
             if (levent != null && levent.AffectedControl != null)
             {
-                Control control = levent.AffectedControl;
+                var control = levent.AffectedControl;
+
                 if (ForceAutoresizeOfControls || control.AutoSize)
                 {
                     switch (FlowDirection)
                     {
                         case FlowDirection.BottomUp:
                         case FlowDirection.TopDown:
-                            control.Width = this.ClientSize.Width - control.Margin.Left - control.Margin.Right;
+                            control.Width = ClientSize.Width - control.Margin.Left - control.Margin.Right;
                             break;
 
                         case FlowDirection.LeftToRight:
                         case FlowDirection.RightToLeft:
-                            control.Height = this.ClientSize.Height - control.Margin.Top - control.Margin.Bottom;
+                            control.Height = ClientSize.Height - control.Margin.Top - control.Margin.Bottom;
                             break;
 
                         default:

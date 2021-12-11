@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TeardownModManager;
 
 namespace Teardown.Classes
@@ -22,15 +19,17 @@ namespace Teardown.Classes
 
         internal ModInfoFile(FileInfo file, bool readFile = true) : base(file, readFile)
         {
-            this.File = file;
+            File = file;
             if (readFile) Read();
         }
         public ModInfoFile Read()
         {
             base.Read();
+
             foreach (var thing in _IniData.Global)
             {
                 var _name = thing.KeyName.ToLowerInvariant();
+
                 switch (_name)
                 {
                     case "name":
@@ -47,6 +46,7 @@ namespace Teardown.Classes
                         break;
                 }
             }
+
             Utils.Logger.Debug($"ModInfoFile read: {this.ToJson(true)}");
             return this;
         }

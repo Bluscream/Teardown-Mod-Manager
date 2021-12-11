@@ -7,10 +7,11 @@ namespace TeardownModManager.Setup
 {
     public class PathLogic
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         public DirectoryInfo GetInstallationPath()
         {
             var steam = GetSteamLocation();
+
             if (steam != null)
             {
                 if (steam.Exists)
@@ -21,20 +22,25 @@ namespace TeardownModManager.Setup
                     }
                 }
             }
+
             Logger.Warn("Could not find {Teardown.Game.Name} path through \"steam path\".");
 
             var local = Utils.getOwnPath().Directory;
+
             if (local.CombineFile(Teardown.Game.AppFileName).Exists)
             {
                 return local;
             }
+
             Logger.Warn($"Could not find {Teardown.Game.Name} at {local.FullName.Quote()}.");
 
             local = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+
             if (local.CombineFile(Teardown.Game.AppFileName).Exists)
             {
                 return local;
             }
+
             Logger.Warn($"Could not find {Teardown.Game.Name} at {local.FullName.Quote()}.");
 
             // iterate over all drives
@@ -43,42 +49,43 @@ namespace TeardownModManager.Setup
                 if (drive.DriveType == DriveType.Fixed)
                 {
                     var path = new DirectoryInfo(drive.Name).Combine("steam", "steamapps", "common", "Teardown");
+
                     if (path.CombineFile(Teardown.Game.AppFileName).Exists)
                     {
                         return path;
                     }
+
                     Logger.Warn($"Could not find {Teardown.Game.Name} at {path.FullName.Quote()}.");
                 }
             }
+
             Logger.Warn($"Could not find {Teardown.Game.Name} path through \"all drives\".");
 
             var fallback = GetFallbackDirectory();
             return fallback;
         }
 
-        private DirectoryInfo GetFallbackDirectory()
+        DirectoryInfo GetFallbackDirectory()
         {
-            bool folder = false;
+            var folder = false;
             MessageBoxManager.Yes = "Browse exe";
             MessageBoxManager.No = "Browse dir";
             MessageBoxManager.Register();
             var result = MessageBox.Show($"We couldn't seem to find your {Teardown.Game.Name} installation, please show us where it is located.", "Error", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error);
             MessageBoxManager.Unregister();
+
             if (result == DialogResult.Cancel) Utils.Exit();
-            else if (result == DialogResult.No)
-            {
-                folder = true;
-            }
+            else if (result == DialogResult.No) folder = true;
+
             return NotFoundHandler(folder);
         }
 
-        private DirectoryInfo GetSteamLocation()
+        DirectoryInfo GetSteamLocation()
         {
             try
             {
                 var steamFinder = new SteamFinder();
-                if (!steamFinder.FindSteam())
-                    return null;
+                if (!steamFinder.FindSteam()) return null;
                 return new DirectoryInfo(steamFinder.FindGameFolder(Teardown.Game.SteamAppId));
             }
             catch (Exception)
@@ -106,14 +113,15 @@ namespace TeardownModManager.Setup
         }
         */
 
-        private DirectoryInfo NotFoundHandler(bool folder)
+        DirectoryInfo NotFoundHandler(bool folder)
         {
             var found = string.Empty;
+
             while (found == string.Empty)
-            {
                 if (folder) found = FindFolder();
                 else found = FindFile();
-            }
+
+
             return found == string.Empty ? null : new DirectoryInfo(found);
         }
 
@@ -126,10 +134,12 @@ namespace TeardownModManager.Setup
                 fileDialog.Filter = $"{Teardown.Game.Name} Executables|{Teardown.Game.AppFileName}.exe|All Executables|*.exe|All Files|*";
                 fileDialog.Multiselect = false;
                 var result = fileDialog.ShowDialog();
-                if (result == DialogResult.Cancel) { Utils.Exit(); }
+
+                if (result == DialogResult.Cancel) Utils.Exit();
                 else if (result == DialogResult.OK)
                 {
                     var path = new FileInfo(fileDialog.FileName);
+
                     if (File.Exists(Path.Combine(path.DirectoryName, Teardown.Game.AppFileName)))
                     {
                         return path.DirectoryName;
@@ -139,6 +149,7 @@ namespace TeardownModManager.Setup
                         MessageBox.Show($"The directory you selected doesn't contain {Teardown.Game.AppFileName}! please try again!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
+
                 return string.Empty;
             }
         }
@@ -151,10 +162,12 @@ namespace TeardownModManager.Setup
                 folderDialog.RootFolder = Environment.SpecialFolder.MyComputer;
                 folderDialog.ShowNewFolderButton = false;
                 var result = folderDialog.ShowDialog();
-                if (result == DialogResult.Cancel) { Utils.Exit(); }
+
+                if (result == DialogResult.Cancel) Utils.Exit();
                 else if (result == DialogResult.OK)
                 {
-                    string path = folderDialog.SelectedPath;
+                    var path = folderDialog.SelectedPath;
+
                     if (File.Exists(Path.Combine(path, Teardown.Game.AppFileName)))
                     {
                         return folderDialog.SelectedPath;
@@ -165,6 +178,7 @@ namespace TeardownModManager.Setup
                     }
                 }
             }
+
             return string.Empty;
         }
     }

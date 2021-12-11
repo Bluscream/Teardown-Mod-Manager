@@ -5,8 +5,6 @@ VisualStudioVersion = 17.1.31903.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teardown Mod Manager", "TeardownModManager\Teardown Mod Manager.csproj", "{53E38B43-8829-4BE5-87D4-DB147E09463C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serious Sam Fusion Mod Manager", "..\..\..\Serious-Sam-Fusion-Mod-Manager\SSFModManager\Serious Sam Fusion Mod Manager.csproj", "{0752ECDB-2539-4CF2-8354-9479E9FFC06A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{53E38B43-8829-4BE5-87D4-DB147E09463C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53E38B43-8829-4BE5-87D4-DB147E09463C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53E38B43-8829-4BE5-87D4-DB147E09463C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0752ECDB-2539-4CF2-8354-9479E9FFC06A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0752ECDB-2539-4CF2-8354-9479E9FFC06A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0752ECDB-2539-4CF2-8354-9479E9FFC06A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0752ECDB-2539-4CF2-8354-9479E9FFC06A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

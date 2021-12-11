@@ -12,7 +12,7 @@ namespace Teardown.Classes
             TeardownModManager.Utils.Logger.Debug("public XMLFile(FileInfo file, bool readFile = true)");
             this.file = file;
             _XmlDocument = new XmlDocument();
-            if (readFile) this.Read();
+            if (readFile) Read();
         }
         public XMLFile Read()
         {
@@ -20,6 +20,7 @@ namespace Teardown.Classes
             _XmlDocument.Load(file.FullName);
             return this;
         }
+
         public void Write()
         {
             TeardownModManager.Utils.Logger.Debug("public void Write(FileInfo file)");

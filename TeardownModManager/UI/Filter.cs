@@ -7,26 +7,27 @@ namespace TeardownModManager
 {
     public partial class MainForm
     {
-        private void OnlyShowDisabled_Click(object sender, EventArgs e)
+        void OnlyShowDisabled_Click(object sender, EventArgs e)
         {
             onlyShowEnabled.Checked = onlyShowDisabled.Checked;
             onlyShowDisabled.Checked = !onlyShowDisabled.Checked;
             FilterByText();
         }
 
-        private void OnlyShowEnabled_Click(object sender, EventArgs e)
+        void OnlyShowEnabled_Click(object sender, EventArgs e)
         {
             onlyShowDisabled.Checked = onlyShowEnabled.Checked;
             onlyShowEnabled.Checked = !onlyShowEnabled.Checked;
             FilterByText();
         }
 
-        private void FilterMenuItem_Click(object sender, EventArgs e) => SwitchFilter((ToolStripMenuItem)sender);
+        void FilterMenuItem_Click(object sender, EventArgs e) => SwitchFilter((ToolStripMenuItem)sender);
 
-        private void SwitchFilter(ToolStripMenuItem selectedMenuItem)
+        void SwitchFilter(ToolStripMenuItem selectedMenuItem)
         {
             selectedMenuItem.Checked ^= true;
-            List<ToolStripMenuItem> filterItems = new List<ToolStripMenuItem>();
+            var filterItems = new List<ToolStripMenuItem>();
+
             foreach (var ltoolStripMenuItem in from object item in selectedMenuItem.Owner.Items
                                                let ltoolStripMenuItem = item as ToolStripMenuItem
                                                where ltoolStripMenuItem != null
@@ -45,16 +46,18 @@ namespace TeardownModManager
             {
                 foreach (var item in filterItems.Where(item => !item.Equals(selectedMenuItem))) item.Checked = false;
             }
+
             selectedMenuItem.Owner.Show();
             FilterByText();
         }
 
-        private void Txt_mods_filter_TextChanged(object sender, EventArgs e) => FilterByText();
+        void Txt_mods_filter_TextChanged(object sender, EventArgs e) => FilterByText();
 
-        private async void FilterByText()
+        async void FilterByText()
         {
             var txt = txt_mods_filter.Text.ToLowerInvariant();
-            List<Teardown.Mod> matchingMods = new List<Teardown.Mod>();
+            var matchingMods = new List<Teardown.Mod>();
+
             if (!txt.IsNullOrEmpty())
             {
                 if (searchInEverything.Checked) matchingMods.AddRange(modsInCategory.Where(m => m.ToJson().ToLowerInvariant().Contains(txt)).ToList());
@@ -69,8 +72,10 @@ namespace TeardownModManager
                 }
             }
             else { matchingMods.AddRange(modsInCategory); }
+
             if (onlyShowDisabled.Checked) matchingMods = matchingMods.Where(m => m.Disabled).ToList();
             else if (onlyShowEnabled.Checked) matchingMods = matchingMods.Where(m => !m.Disabled).ToList();
+
             FillModList(matchingMods);
         }
     }

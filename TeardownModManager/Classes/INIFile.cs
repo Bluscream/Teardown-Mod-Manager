@@ -1,20 +1,20 @@
-using System.IO;
 using IniParser;
 using IniParser.Model;
+using System.IO;
 using TeardownModManager;
 
 namespace Teardown.Classes
 {
     public class INIFile
     {
-        private static FileIniDataParser parser = new FileIniDataParser();
+        static FileIniDataParser parser = new FileIniDataParser();
 
         internal FileInfo file;
         internal IniData _IniData;
         public INIFile(FileInfo file, bool readFile = true)
         {
             this.file = file;
-            if (readFile) this.Read();
+            if (readFile) Read();
         }
         public INIFile Read()
         {
@@ -25,9 +25,7 @@ namespace Teardown.Classes
             _IniData = parser.ReadFile(file.FullName);
             return this;
         }
-        public void Write()
-        {
-            parser.WriteFile(file.FullName, _IniData);
-        }
+
+        public void Write() => parser.WriteFile(file.FullName, _IniData);
     }
 }
