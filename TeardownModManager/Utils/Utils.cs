@@ -13,7 +13,8 @@ namespace TeardownModManager
     {
         public static partial class Logger
         {
-            static readonly NLog.Logger NLogger = NLog.LogManager.GetCurrentClassLogger();
+            private static readonly NLog.Logger NLogger = NLog.LogManager.GetCurrentClassLogger();
+
             public static void Debug(string format, params object[] arg) => Log(NLog.LogLevel.Debug, format, arg);
 
             public static void Info(string format, params object[] arg) => Log(NLog.LogLevel.Info, format, arg);

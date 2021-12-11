@@ -7,15 +7,17 @@ namespace Teardown.Classes
 {
     public class INIFile
     {
-        static FileIniDataParser parser = new FileIniDataParser();
+        private static FileIniDataParser parser = new FileIniDataParser();
 
         internal FileInfo file;
         internal IniData _IniData;
+
         public INIFile(FileInfo file, bool readFile = true)
         {
             this.file = file;
             if (readFile) Read();
         }
+
         public INIFile Read()
         {
             parser.Parser.Configuration.CommentChar = '#';

@@ -7,23 +7,23 @@ namespace TeardownModManager
 {
     public partial class MainForm
     {
-        void OnlyShowDisabled_Click(object sender, EventArgs e)
+        private void OnlyShowDisabled_Click(object sender, EventArgs e)
         {
             onlyShowEnabled.Checked = onlyShowDisabled.Checked;
             onlyShowDisabled.Checked = !onlyShowDisabled.Checked;
             FilterByText();
         }
 
-        void OnlyShowEnabled_Click(object sender, EventArgs e)
+        private void OnlyShowEnabled_Click(object sender, EventArgs e)
         {
             onlyShowDisabled.Checked = onlyShowEnabled.Checked;
             onlyShowEnabled.Checked = !onlyShowEnabled.Checked;
             FilterByText();
         }
 
-        void FilterMenuItem_Click(object sender, EventArgs e) => SwitchFilter((ToolStripMenuItem)sender);
+        private void FilterMenuItem_Click(object sender, EventArgs e) => SwitchFilter((ToolStripMenuItem)sender);
 
-        void SwitchFilter(ToolStripMenuItem selectedMenuItem)
+        private void SwitchFilter(ToolStripMenuItem selectedMenuItem)
         {
             selectedMenuItem.Checked ^= true;
             var filterItems = new List<ToolStripMenuItem>();
@@ -51,9 +51,9 @@ namespace TeardownModManager
             FilterByText();
         }
 
-        void Txt_mods_filter_TextChanged(object sender, EventArgs e) => FilterByText();
+        private void Txt_mods_filter_TextChanged(object sender, EventArgs e) => FilterByText();
 
-        async void FilterByText()
+        private async void FilterByText()
         {
             var txt = txt_mods_filter.Text.ToLowerInvariant();
             var matchingMods = new List<Teardown.Mod>();

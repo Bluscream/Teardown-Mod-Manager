@@ -15,7 +15,7 @@ namespace TeardownModManager.UI
             ForceAutoresizeOfControls = true;
         }
 
-        void InitializeComponent()
+        private void InitializeComponent()
         {
             SuspendLayout();
             //

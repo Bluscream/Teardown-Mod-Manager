@@ -12,14 +12,14 @@ namespace TeardownModManager
 {
     public partial class MainForm : Form
     {
-        static Regex tabRegex = new Regex(@"(.*) \(\d+\)");
+        private static Regex tabRegex = new Regex(@"(.*) \(\d+\)");
         public Teardown.Game Game;
 
         // public SteamClient steam;
         public HttpClient webClient;
 
-        ModDirWatcher ModDirWatcher;
-        List<Teardown.Mod> modsInCategory = new List<Teardown.Mod>();
+        private ModDirWatcher ModDirWatcher;
+        private List<Teardown.Mod> modsInCategory = new List<Teardown.Mod>();
 
         public MainForm()
         {
@@ -29,7 +29,7 @@ namespace TeardownModManager
             Init();
         }
 
-        void PreInit()
+        private void PreInit()
         {
             var path = new Setup.PathLogic();
             var binPath = path.GetInstallationPath();
@@ -43,7 +43,7 @@ namespace TeardownModManager
             Game = new Teardown.Game(binPath);
         }
 
-        async void Init()
+        private async void Init()
         {
             if (Game == null) Utils.Exit();
             Game.OnDetailsLoaded += Game_OnDetailsLoaded;
@@ -56,12 +56,12 @@ namespace TeardownModManager
             Log($"Loaded {Teardown.Game.Name} with {Game.Mods.Count} mods.", Color.Green);
         }
 
-        void Game_OnDetailsLoaded(object sender)
+        private void Game_OnDetailsLoaded(object sender)
         {
             // InitModList();
         }
 
-        void MainForm_Load(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
             // Console.WriteLine(game.Mods.Where(t => t.Disabled).ToJson());
             /*Thread.Sleep(TimeSpan.FromSeconds(1));
@@ -76,7 +76,7 @@ namespace TeardownModManager
             FillTabs(Game.Mods);
         }
 
-        void FillTabs(List<Teardown.Mod> mods)
+        private void FillTabs(List<Teardown.Mod> mods)
         {
             tabs_tags.TabPages.Clear();
             tabs_tags.TabPages.Add(new TabPage() { Text = $"All ({Game.Mods.Count})" });
@@ -103,7 +103,7 @@ namespace TeardownModManager
             }
         }
 
-        void Tabs_tags_SelectedIndexChanged(object sender, EventArgs e)
+        private void Tabs_tags_SelectedIndexChanged(object sender, EventArgs e)
         {
             var i = (sender as TabControl).SelectedIndex;
             if (i < 0) return;
@@ -124,7 +124,7 @@ namespace TeardownModManager
             FilterByText();
         }
 
-        void FillModList(List<Teardown.Mod> mods)
+        private void FillModList(List<Teardown.Mod> mods)
         {
             lst_mods.Items.Clear();
 
@@ -143,7 +143,7 @@ namespace TeardownModManager
             // lst_mods.SelectedIndex = 0;
         }
 
-        void Menu_mods_Opening(object sender, CancelEventArgs e)
+        private void Menu_mods_Opening(object sender, CancelEventArgs e)
         {
             if (lst_mods.SelectedItems.Count < 1) { e.Cancel = true; return; }
             var mod = (Teardown.Mod)lst_mods.SelectedItems[0];
@@ -154,14 +154,14 @@ namespace TeardownModManager
             menu_mods.Items[1].Text = mod.Disabled ? "Enable" : "Disable";
         }
 
-        void Lst_mods_SelectedIndexChanged(object sender, EventArgs e)
+        private void Lst_mods_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lst_mods.SelectedItems.Count < 1) return;
             var mod = (Teardown.Mod)lst_mods.SelectedItems[0];
             FillMod(mod);
         }
 
-        void FillMod(Teardown.Mod mod)
+        private void FillMod(Teardown.Mod mod)
         {
             txt_brief.Text = mod.ToJson();
             txt_mod_description.Text = mod.Details?.description ?? string.Empty;
@@ -172,7 +172,7 @@ namespace TeardownModManager
                 FillModPart(item);
         }
 
-        void FillModPart(KeyValuePair<string, object> item, GroupBox parent = null)
+        private void FillModPart(KeyValuePair<string, object> item, GroupBox parent = null)
         {
             Control add_to;
 
@@ -230,7 +230,7 @@ namespace TeardownModManager
             }
         }
 
-        Panel GetModPartWithLabel(string labelText, Control control)
+        private Panel GetModPartWithLabel(string labelText, Control control)
         {
             var label = new Label() { Text = labelText + ":", Dock = DockStyle.Top };
             control.Dock = DockStyle.Bottom;
@@ -240,20 +240,20 @@ namespace TeardownModManager
             return panel;
         }
 
-        void FillModPartList(System.Collections.IEnumerable enumerable, GroupBox parent = null)
+        private void FillModPartList(System.Collections.IEnumerable enumerable, GroupBox parent = null)
         {
             var listBox = new ListBox() { DataSource = enumerable };
             parent.Controls.Add(listBox);
         }
 
-        void OpenFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var mod = (Teardown.Mod)lst_mods.SelectedItems[0];
             if (mod == null) return;
             Utils.OpenFolderInExplorer(mod.Directory);
         }
 
-        void DisableToolStripMenuItem_Click(object sender, EventArgs e)
+        private void DisableToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var menuItem = (ToolStripMenuItem)sender;
             var state = (menuItem.Text == "Disable" ? true : false);
@@ -274,7 +274,7 @@ namespace TeardownModManager
             }
         }
 
-        bool CheckGameRunning()
+        private bool CheckGameRunning()
         {
             if (!Game.Running()) return true;
             var list = Game.Processes.Select(p => $"{p.ProcessName} ({p.Id})").ToList();
@@ -290,18 +290,18 @@ namespace TeardownModManager
             return true;
         }
 
-        void StartToolStripMenuItem_Click(object sender, EventArgs e)
+        private void StartToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (!CheckGameRunning()) return;
             Utils.StartProcess(Game.Binaries.Main.File(Game, Teardown.Architecture.WIN_64));
         }
 
-        void StartEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        private void StartEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        void KillToolStripMenuItem_Click(object sender, EventArgs e)
+        private void KillToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (var proc in Game.Processes)
                 if (!proc.HasExited) proc.Kill();
@@ -309,13 +309,13 @@ namespace TeardownModManager
             MessageBox.Show($"Killed {Game.Processes.Where(p => p.HasExited).Count()} / {Game.Processes.Count} processes");
         }
 
-        void FocusToolStripMenuItem_Click(object sender, EventArgs e)
+        private void FocusToolStripMenuItem_Click(object sender, EventArgs e)
         {
         }
 
-        void ReloadToolStripMenuItem1_Click(object sender, EventArgs e) => InitModList();
+        private void ReloadToolStripMenuItem1_Click(object sender, EventArgs e) => InitModList();
 
-        void MainForm_KeyDown(object sender, KeyEventArgs e)
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
             return;
 
@@ -329,7 +329,7 @@ namespace TeardownModManager
             }
         }
 
-        void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (ModDirWatcher != null) ModDirWatcher.Dispose();
         }
@@ -342,9 +342,9 @@ namespace TeardownModManager
             // status.Invalidate(); status.Refresh();
         }
 
-        void onLinkClicked(object sender, EventArgs e) => Utils.StartProcess(((ToolStripMenuItem)sender).Tag as string);
+        private void onLinkClicked(object sender, EventArgs e) => Utils.StartProcess(((ToolStripMenuItem)sender).Tag as string);
 
-        void workshopToolStripMenuItem_Click(object sender, EventArgs e)
+        private void workshopToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var mod = (Teardown.Mod)lst_mods.SelectedItems[0];
             if (mod is null || mod.SteamWorkshopId is null) return;
@@ -352,6 +352,7 @@ namespace TeardownModManager
         }
     }
 }
+
 /*
 *         private async void users_node_selectedAsync(object sender, TreeNodeMouseClickEventArgs e)
       {

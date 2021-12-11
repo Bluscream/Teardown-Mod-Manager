@@ -7,7 +7,8 @@ namespace TeardownModManager.Setup
 {
     public class PathLogic
     {
-        static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public DirectoryInfo GetInstallationPath()
         {
             var steam = GetSteamLocation();
@@ -65,7 +66,7 @@ namespace TeardownModManager.Setup
             return fallback;
         }
 
-        DirectoryInfo GetFallbackDirectory()
+        private DirectoryInfo GetFallbackDirectory()
         {
             var folder = false;
             MessageBoxManager.Yes = "Browse exe";
@@ -80,7 +81,7 @@ namespace TeardownModManager.Setup
             return NotFoundHandler(folder);
         }
 
-        DirectoryInfo GetSteamLocation()
+        private DirectoryInfo GetSteamLocation()
         {
             try
             {
@@ -113,7 +114,7 @@ namespace TeardownModManager.Setup
         }
         */
 
-        DirectoryInfo NotFoundHandler(bool folder)
+        private DirectoryInfo NotFoundHandler(bool folder)
         {
             var found = string.Empty;
 

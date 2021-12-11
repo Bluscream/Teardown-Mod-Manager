@@ -12,6 +12,7 @@ namespace Teardown.Classes
         // description = [noupload]A mod which supports extended vehicle features
         // tags = Gameplay, Global
         public FileInfo File;
+
         public string Name = "<UNKOWN>";
         public string Author = "<UNKOWN>";
         public string Description = "<UNKOWN>";
@@ -22,6 +23,7 @@ namespace Teardown.Classes
             File = file;
             if (readFile) Read();
         }
+
         public ModInfoFile Read()
         {
             base.Read();
@@ -35,12 +37,15 @@ namespace Teardown.Classes
                     case "name":
                         Name = thing.Value;
                         break;
+
                     case "author":
                         Author = thing.Value;
                         break;
+
                     case "description":
                         Description = thing.Value;
                         break;
+
                     case "tags":
                         Tags = new HashSet<string>(thing.Value.Split(',').Select(x => x.Trim()));
                         break;

@@ -16,7 +16,8 @@ namespace Teardown
     public class Mod
     {
         [JsonIgnore]
-        Game Game { get; set; }
+        private Game Game { get; set; }
+
         public DirectoryInfo Directory { get; set; }
         public ModsFileEntry ModsFileEntry { get; set; }
         public ModInfoFile ModInfoFile { get; set; }
@@ -30,6 +31,7 @@ namespace Teardown
                 return "<UNKNOWN>";
             }
         }
+
         public string Author
         {
             get
@@ -39,6 +41,7 @@ namespace Teardown
                 return "<UNKNOWN>";
             }
         }
+
         public string Description
         {
             get
@@ -48,6 +51,7 @@ namespace Teardown
                 return "<UNKNOWN>";
             }
         }
+
         public string SteamWorkshopId
         {
             get
@@ -58,6 +62,7 @@ namespace Teardown
                 return null;
             }
         }
+
         public ModType Type { get; set; }
         public bool Disabled => ModsFileEntry?.Active ?? true;
         public Publishedfiledetail Details { get; set; }

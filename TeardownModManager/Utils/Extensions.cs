@@ -20,6 +20,7 @@ namespace TeardownModManager
     internal static class Extensions
     {
         #region Reflection
+
         public static Dictionary<string, object> ToDictionary(this object instanceToConvert)
         {
             return instanceToConvert.GetType()
@@ -29,7 +30,7 @@ namespace TeardownModManager
               propertyInfo => Extensions.ConvertPropertyToDictionary(propertyInfo, instanceToConvert));
         }
 
-        static object ConvertPropertyToDictionary(PropertyInfo propertyInfo, object owner)
+        private static object ConvertPropertyToDictionary(PropertyInfo propertyInfo, object owner)
         {
             var propertyType = propertyInfo.PropertyType;
             var propertyValue = propertyInfo.GetValue(owner);
@@ -104,7 +105,6 @@ namespace TeardownModManager
             foreach (var path in paths)
                 final = Path.Combine(final, path);
 
-
             return new DirectoryInfo(final);
         }
 
@@ -119,7 +119,6 @@ namespace TeardownModManager
             foreach (var path in paths)
                 final = Path.Combine(final, path);
 
-
             return new FileInfo(final);
         }
 
@@ -129,7 +128,6 @@ namespace TeardownModManager
 
             foreach (var path in paths)
                 final = Path.Combine(final, path);
-
 
             return new FileInfo(final);
         }
@@ -305,7 +303,7 @@ namespace TeardownModManager
 
         #region Uri
 
-        static readonly Regex QueryRegex = new Regex(@"[?&](\w[\w.]*)=([^?&]+)");
+        private static readonly Regex QueryRegex = new Regex(@"[?&](\w[\w.]*)=([^?&]+)");
 
         public static IReadOnlyDictionary<string, string> ParseQueryString(this Uri uri)
         {

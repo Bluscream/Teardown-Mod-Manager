@@ -10,11 +10,13 @@ namespace Teardown.Classes
     {
         public Version version;
         public HashSet<ModsFileEntry> entries;
+
         internal ModsFile(FileInfo file, bool readFile = true) : base(file, readFile)
         {
             Utils.Logger.Debug("internal ModsFile(FileInfo file, bool readFile = true) : base(file, readFile)");
             if (readFile) Read();
         }
+
         public ModsFile Read()
         {
             Utils.Logger.Debug("internal ModsFile Read()");
@@ -60,6 +62,7 @@ namespace Teardown.Classes
         Steam,
         Local
     }
+
     public class ModsFileEntry
     {
         public XmlNode Node;
@@ -70,6 +73,7 @@ namespace Teardown.Classes
         public DateTimeOffset? LastSubscribed;
         public ModType Type = ModType.Unknown;
     }
+
     public static class ModsFileEntryExtensions
     {
         public static ModsFileEntry Parse(this XmlNode node)

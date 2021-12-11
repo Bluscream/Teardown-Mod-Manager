@@ -87,7 +87,7 @@ namespace VRCModManager.Dependencies
             }
         }
 
-        bool FindLibraries()
+        private bool FindLibraries()
         {
             var steamLibraries = new List<string>();
             var steamDefaultLibrary = Path.Combine(SteamPath, "steamapps");
@@ -130,7 +130,7 @@ namespace VRCModManager.Dependencies
             return true;
         }
 
-        static string GetManifestFilePath(string libraryPath, int appId)
+        private static string GetManifestFilePath(string libraryPath, int appId)
         {
             var manifestPath = Path.Combine(libraryPath, $"appmanifest_{appId}.acf");
 
@@ -140,7 +140,7 @@ namespace VRCModManager.Dependencies
                 return null;
         }
 
-        static string ReadInstallDirFromManifest(string manifestFilePath)
+        private static string ReadInstallDirFromManifest(string manifestFilePath)
         {
             var regex = new Regex(@"""installdir""\s+""(.+)""");
 
@@ -155,7 +155,7 @@ namespace VRCModManager.Dependencies
             return null;
         }
 
-        static string FindWindowsSteamPath()
+        private static string FindWindowsSteamPath()
         {
             var regPath = Environment.Is64BitOperatingSystem
                  ? @"SOFTWARE\Wow6432Node\Valve\Steam"
@@ -170,7 +170,7 @@ namespace VRCModManager.Dependencies
             else return null;
         }
 
-        static string FindUnixSteamPath()
+        private static string FindUnixSteamPath()
         {
             string path = null;
 
@@ -183,7 +183,7 @@ namespace VRCModManager.Dependencies
             return null;
         }
 
-        static string GetDefaultLinuxSteamPath()
+        private static string GetDefaultLinuxSteamPath()
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Personal),
@@ -191,7 +191,7 @@ namespace VRCModManager.Dependencies
             );
         }
 
-        static string GetDefaultMacOsSteamPath()
+        private static string GetDefaultMacOsSteamPath()
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Personal),
@@ -200,7 +200,7 @@ namespace VRCModManager.Dependencies
         }
 
         // https://stackoverflow.com/questions/5116977
-        static bool IsUnix()
+        private static bool IsUnix()
         {
             var p = (int)Environment.OSVersion.Platform;
             return p == 4 || p == 6 || p == 128;

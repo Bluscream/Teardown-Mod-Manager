@@ -7,6 +7,7 @@ namespace Teardown.Classes
     {
         internal FileInfo file;
         internal XmlDocument _XmlDocument;
+
         public XMLFile(FileInfo file, bool readFile = true)
         {
             TeardownModManager.Utils.Logger.Debug("public XMLFile(FileInfo file, bool readFile = true)");
@@ -14,6 +15,7 @@ namespace Teardown.Classes
             _XmlDocument = new XmlDocument();
             if (readFile) Read();
         }
+
         public XMLFile Read()
         {
             TeardownModManager.Utils.Logger.Debug("public XMLFile Read(FileInfo file)");

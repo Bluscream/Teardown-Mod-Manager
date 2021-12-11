@@ -33,8 +33,8 @@ namespace Steam
 {
     public static class Utils
     {
-        static FileInfo cacheFile = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).CombineFile("steam.cache.json");
-        static Cache cache;
+        private static FileInfo cacheFile = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).CombineFile("steam.cache.json");
+        private static Cache cache;
 
         public static async Task<GetPublishedFileDetailsResponse> GetPublishedFileDetailsAsync(HttpClient webClient, Teardown.Mod Mod) => await GetPublishedFileDetailsAsync(webClient, Mod.SteamWorkshopId);
 
@@ -71,7 +71,6 @@ namespace Steam
             for (int i = 0; i < fileIds.Count; i++)
                 values.Add($"publishedfileids[{i}]", fileIds[i].ToString());
 
-
             var content = new FormUrlEncodedContent(values);
             var url = new Uri("https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/");
             Console.WriteLine($"[Steam] POST to {url} with payload {content.ToJson(false)} and values {values.ToJson(false)}");
@@ -94,7 +93,7 @@ namespace Steam
             return parsedResponse;
         }
 
-        static void CheckCache()
+        private static void CheckCache()
         {
             if (cache is null)
             {

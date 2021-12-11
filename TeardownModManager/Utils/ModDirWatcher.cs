@@ -10,10 +10,10 @@ namespace TeardownModManager
     public class ModDirWatcher
     {
         public static DirectoryInfo logDir;
-        static readonly object Lock = new object();
+        private static readonly object Lock = new object();
         public static IEnhancedFileSystemWatcher FSWatcher;
         public static List<Log> watching = new List<Log>();
-        MainForm MainForm;
+        private MainForm MainForm;
 
         public void Init(MainForm mainForm)
         {
@@ -24,7 +24,7 @@ namespace TeardownModManager
             // FSWatcher.Start();
         }
 
-        void OnDirectoryDeletedEvent(object sender, DirectoryDeletedEventArgs e)
+        private void OnDirectoryDeletedEvent(object sender, DirectoryDeletedEventArgs e)
         {
             lock (Lock)
             {
@@ -39,7 +39,7 @@ namespace TeardownModManager
             }
         }
 
-        async void OnDirectoryCreatedEvent(object sender, DirectoryCreatedEventArgs e)
+        private async void OnDirectoryCreatedEvent(object sender, DirectoryCreatedEventArgs e)
         {
             var modDir = new DirectoryInfo(e.FilePath);
             var mod = new Teardown.Mod(MainForm.Game, modDir);
