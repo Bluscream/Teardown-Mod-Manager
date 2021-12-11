@@ -7,10 +7,27 @@ using System.Security.Principal;
 using System.Text;
 using System.Windows.Forms;
 
-namespace SSFModManager
+namespace TeardownModManager
 {
     public static partial class Utils
     {
+        public static partial class Logger
+        {
+            private static readonly NLog.Logger NLogger = NLog.LogManager.GetCurrentClassLogger();
+            public static void Debug(string format, params object[] arg) => Log(NLog.LogLevel.Debug, format, arg);
+            public static void Info(string format, params object[] arg) => Log(NLog.LogLevel.Info, format, arg);
+            public static void Warn(string format, params object[] arg) => Log(NLog.LogLevel.Warn, format, arg);
+            public static void Error(string format, params object[] arg) => Log(NLog.LogLevel.Error, format, arg);
+            public static void Log(NLog.LogLevel logLevel, string format, params object[] arg)
+            {
+                NLogger.Log(logLevel, format, arg);
+                if (Debugger.IsAttached)
+                {
+                    // Console.WriteLine($"[{DateTime.Now}] <{logLevel}> {format}");
+                }
+            }
+        }
+
         public static FileInfo getOwnPath()
         {
             return new FileInfo(Path.GetFullPath(Application.ExecutablePath));
@@ -48,8 +65,8 @@ namespace SSFModManager
         internal static void Exit()
         {
             Application.Exit();
-            var currentP = Process.GetCurrentProcess();
-            currentP.Kill();
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
+            return;
         }
 
         public static void RestartAsAdmin(string[] arguments)

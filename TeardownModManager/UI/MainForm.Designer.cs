@@ -1,4 +1,4 @@
-﻿namespace SSFModManager
+﻿namespace TeardownModManager
 {
     partial class MainForm
     {
@@ -86,8 +86,8 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(12, 56);
             this.splitContainer1.Name = "splitContainer1";
@@ -106,8 +106,8 @@
             // 
             // txt_mods_filter
             // 
-            this.txt_mods_filter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.txt_mods_filter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txt_mods_filter.Location = new System.Drawing.Point(4, 4);
             this.txt_mods_filter.Name = "txt_mods_filter";
@@ -117,8 +117,8 @@
             // 
             // lst_mods
             // 
-            this.lst_mods.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.lst_mods.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lst_mods.ContextMenuStrip = this.menu_mods;
             this.lst_mods.FormattingEnabled = true;
@@ -392,13 +392,6 @@
             this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
             this.debugToolStripMenuItem.Text = "Debug";
             // 
-            // openDisabledFolderToolStripMenuItem
-            // 
-            this.openDisabledFolderToolStripMenuItem.Name = "openDisabledFolderToolStripMenuItem";
-            this.openDisabledFolderToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.openDisabledFolderToolStripMenuItem.Text = "Open Disabled Folder";
-            this.openDisabledFolderToolStripMenuItem.Click += new System.EventHandler(this.OpenDisabledFolderToolStripMenuItem_Click);
-            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
@@ -414,7 +407,7 @@
             // 
             // tabs_tags
             // 
-            this.tabs_tags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tabs_tags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabs_tags.Controls.Add(this.tab_all);
             this.tabs_tags.Location = new System.Drawing.Point(12, 28);

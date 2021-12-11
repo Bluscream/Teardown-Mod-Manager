@@ -1,7 +1,3 @@
-# Serious-Sam-Fusion-Mod-Manager ![](https://img.shields.io/github/downloads/Bluscream/Serious-Sam-Fusion-Mod-Manager/total) ![Lines of code](https://img.shields.io/tokei/lines/github/Bluscream/Serious-Sam-Fusion-Mod-Manager)
+# Teardown Mod Manager ![](https://img.shields.io/github/downloads/Bluscream/Teardown-Mod-Manager/total) ![Lines of code](https://img.shields.io/tokei/lines/github/Bluscream/Teardown-Mod-Manager)
 
-Mod Manager for Serious Sam Fusion
-
-![](https://raw.githubusercontent.com/Bluscream/Serious-Sam-Fusion-Mod-Manager/master/SSFModManager_2021-02-08_03-16-03.png)
-![](https://raw.githubusercontent.com/Bluscream/Serious-Sam-Fusion-Mod-Manager/master/SSFModManager_2021-02-08_03-17-24.png)
-![](https://raw.githubusercontent.com/Bluscream/Serious-Sam-Fusion-Mod-Manager/master/SSFModManager_2021-02-08_03-17-28.png)
+Mod Manager for Teardown

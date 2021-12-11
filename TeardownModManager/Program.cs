@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace SSFModManager
+namespace TeardownModManager
 {
     internal static class Program
     {

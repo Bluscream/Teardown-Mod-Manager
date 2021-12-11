@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace SSFModManager
+namespace TeardownModManager
 {
     public partial class MainForm
     {
@@ -54,7 +54,7 @@ namespace SSFModManager
         private async void FilterByText()
         {
             var txt = txt_mods_filter.Text.ToLowerInvariant();
-            List<SSF.Mod> matchingMods = new List<SSF.Mod>();
+            List<Teardown.Mod> matchingMods = new List<Teardown.Mod>();
             if (!txt.IsNullOrEmpty())
             {
                 if (searchInEverything.Checked) matchingMods.AddRange(modsInCategory.Where(m => m.ToJson().ToLowerInvariant().Contains(txt)).ToList());

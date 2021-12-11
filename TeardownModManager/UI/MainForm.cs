@@ -8,28 +8,29 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
-namespace SSFModManager
+namespace TeardownModManager
 {
     public partial class MainForm : Form
     {
         private static Regex tabRegex = new Regex(@"(.*) \(\d+\)");
-        public SSF.Game Game;
+        public Teardown.Game Game;
 
         // public SteamClient steam;
         public HttpClient webClient;
 
         private ModDirWatcher ModDirWatcher;
-        private List<SSF.Mod> modsInCategory = new List<SSF.Mod>();
+        private List<Teardown.Mod> modsInCategory = new List<Teardown.Mod>();
 
         private void PreInit()
         {
             var path = new Setup.PathLogic();
             var binPath = path.GetInstallationPath();
+            if (binPath == null) Utils.Exit();
             if (!binPath.Exists)
             {
-                MessageBox.Show("Sorry the game wasn't found, exiting.."); Application.Exit();
+                MessageBox.Show("Sorry the game wasn't found, exiting.."); Utils.Exit();
             }
-            Game = new SSF.Game(binPath.Parent.Parent);
+            Game = new Teardown.Game(binPath);
         }
 
         public MainForm()
@@ -42,6 +43,7 @@ namespace SSFModManager
 
         private async void Init()
         {
+            if (Game == null) Utils.Exit();
             Game.OnDetailsLoaded += Game_OnDetailsLoaded;
             webClient = new HttpClient();
             await Game.UpdateModDetailsAsync(webClient);
@@ -49,7 +51,7 @@ namespace SSFModManager
             // steam.Timeout = 5;
             InitModList();
             modsInCategory = Game.Mods;
-            Log($"Loaded {SSF.Game.Name} with {Game.Mods.Count} mods.", Color.Green);
+            Log($"Loaded {Teardown.Game.Name} with {Game.Mods.Count} mods.", Color.Green);
         }
 
         private void Game_OnDetailsLoaded(object sender)
@@ -72,7 +74,7 @@ namespace SSFModManager
             FillTabs(Game.Mods);
         }
 
-        private void FillTabs(List<SSF.Mod> mods)
+        private void FillTabs(List<Teardown.Mod> mods)
         {
             tabs_tags.TabPages.Clear();
             tabs_tags.TabPages.Add(new TabPage() { Text = $"All ({Game.Mods.Count})" });
@@ -107,7 +109,7 @@ namespace SSFModManager
             text = tabRegex.Match(text).Groups[1].Value;
             if (text != "All")
             {
-                modsInCategory = new List<SSF.Mod>();
+                modsInCategory = new List<Teardown.Mod>();
                 foreach (var mod in Game.Mods.ToList())
                 {
                     if (mod.Tags != null && mod.Tags.Contains(text)) modsInCategory.Add(mod);
@@ -118,7 +120,7 @@ namespace SSFModManager
             FilterByText();
         }
 
-        private void FillModList(List<SSF.Mod> mods)
+        private void FillModList(List<Teardown.Mod> mods)
         {
             lst_mods.Items.Clear();
             foreach (var mod in mods.OrderBy(m => m.Name))
@@ -139,7 +141,7 @@ namespace SSFModManager
         private void Menu_mods_Opening(object sender, CancelEventArgs e)
         {
             if (lst_mods.SelectedItems.Count < 1) { e.Cancel = true; return; }
-            var mod = (SSF.Mod)lst_mods.SelectedItems[0];
+            var mod = (Teardown.Mod)lst_mods.SelectedItems[0];
             if (mod == null) { e.Cancel = true; return; }
             var oneSelected = (lst_mods.SelectedItems.Count == 1);
             openFolderToolStripMenuItem.Visible = oneSelected;
@@ -150,11 +152,11 @@ namespace SSFModManager
         private void Lst_mods_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lst_mods.SelectedItems.Count < 1) return;
-            var mod = (SSF.Mod)lst_mods.SelectedItems[0];
+            var mod = (Teardown.Mod)lst_mods.SelectedItems[0];
             FillMod(mod);
         }
 
-        private void FillMod(SSF.Mod mod)
+        private void FillMod(Teardown.Mod mod)
         {
             txt_brief.Text = mod.ToJson();
             txt_mod_description.Text = mod.Details?.description ?? String.Empty;
@@ -233,7 +235,7 @@ namespace SSFModManager
 
         private void OpenFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var mod = (SSF.Mod)lst_mods.SelectedItems[0];
+            var mod = (Teardown.Mod)lst_mods.SelectedItems[0];
             if (mod == null) return;
             Utils.OpenFolderInExplorer(mod.Directory);
         }
@@ -242,8 +244,8 @@ namespace SSFModManager
         {
             var menuItem = (ToolStripMenuItem)sender;
             var state = (menuItem.Text == "Disable" ? true : false);
-            var mods = lst_mods.SelectedItems.Cast<SSF.Mod>().ToList();
-            mods.ForEach(m => m.Disabled = state);
+            var mods = lst_mods.SelectedItems.Cast<Teardown.Mod>().ToList();
+            // mods.ForEach(m => m.Disabled = state); // TODO: Fix
             if (mods.Count < 1)
             {
                 MessageBox.Show("No mods selected", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -257,11 +259,6 @@ namespace SSFModManager
                 var mod = mods.First();
                 MessageBox.Show($"{(!mod.Disabled).ToEnabledDisabled()} {mod.Name}", Text);
             }
-        }
-
-        private void OpenDisabledFolderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Utils.OpenFolderInExplorer(Game.DisabledModsDir);
         }
 
         private bool CheckGameRunning()
@@ -283,13 +280,12 @@ namespace SSFModManager
         private void StartToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (!CheckGameRunning()) return;
-            var file = ModifierKeys == Keys.Shift ? Game.Binaries.Main.File(Game, SSF.Architecture.WIN_64) : Game.Binaries.Modded.File(Game, SSF.Architecture.WIN_64);
-            Utils.StartProcess(file);
+            Utils.StartProcess(Game.Binaries.Main.File(Game, Teardown.Architecture.WIN_64));
         }
 
         private void StartEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Utils.StartProcess(Game.Binaries.Editor.File(Game, SSF.Architecture.WIN_64));
+            throw new NotImplementedException();
         }
 
         private void KillToolStripMenuItem_Click(object sender, EventArgs e)
@@ -340,9 +336,9 @@ namespace SSFModManager
 
         private void workshopToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var mod = (SSF.Mod)lst_mods.SelectedItems[0];
-            if (mod == null) return;
-            Utils.StartProcess($"steam://openurl/https://steamcommunity.com/sharedfiles/filedetails/?id={mod.Details.publishedfileid}");
+            var mod = (Teardown.Mod)lst_mods.SelectedItems[0];
+            if (mod is null || mod.SteamWorkshopId is null) return;
+            Utils.StartProcess($"steam://openurl/https://steamcommunity.com/sharedfiles/filedetails/?id={mod.SteamWorkshopId}");
         }
     }
 }

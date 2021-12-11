@@ -15,12 +15,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SSFModManager
+namespace TeardownModManager
 {
     internal static class Extensions
     {
         #region Reflection
-
         public static Dictionary<string, object> ToDictionary(this object instanceToConvert)
         {
             return instanceToConvert.GetType()
@@ -203,12 +202,18 @@ namespace SSFModManager
             return Source.Replace(Replace, string.Empty);
         }
 
-        public static string ReplaceLastOccurrence(this string Source, string Find, string Replace)
+        public static string ReplaceFirst(this string text, string search, string replace)
         {
-            int place = Source.LastIndexOf(Find);
-            if (place == -1)
-                return Source;
-            string result = Source.Remove(place, Find.Length).Insert(place, Replace);
+            var pos = text.IndexOf(search);
+            if (pos < 0) return text;
+            return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
+        }
+
+        public static string ReplaceLast(this string Source, string search, string replace)
+        {
+            var place = Source.LastIndexOf(search);
+            if (place == -1) return Source;
+            var result = Source.Remove(place, search.Length).Insert(place, replace);
             return result;
         }
 

@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace SSFModManager.UI
+namespace TeardownModManager.UI
 {
     /// <summary>
     /// A stackpanel similar to the Wpf stackpanel.

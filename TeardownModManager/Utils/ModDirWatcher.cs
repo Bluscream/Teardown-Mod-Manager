@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using Talifun.FileWatcher;
 
-namespace SSFModManager
+namespace TeardownModManager
 {
     public class ModDirWatcher
     {
@@ -17,11 +17,11 @@ namespace SSFModManager
 
         public void Init(MainForm mainForm)
         {
-            logDir = mainForm.Game.GetModsDirs().First();
-            FSWatcher = EnhancedFileSystemWatcherFactory.Instance.CreateEnhancedFileSystemWatcher(logDir.FullName, "*", 1000, false);
-            FSWatcher.DirectoryCreatedEvent += OnDirectoryCreatedEvent;
-            FSWatcher.DirectoryDeletedEvent += OnDirectoryDeletedEvent;
-            FSWatcher.Start();
+            //logDir = mainForm.Game.GetModsDirs().First();
+            //FSWatcher = EnhancedFileSystemWatcherFactory.Instance.CreateEnhancedFileSystemWatcher(logDir.FullName, "*", 1000, false);
+            //FSWatcher.DirectoryCreatedEvent += OnDirectoryCreatedEvent;
+            //FSWatcher.DirectoryDeletedEvent += OnDirectoryDeletedEvent;
+            //FSWatcher.Start();
         }
 
         private void OnDirectoryDeletedEvent(object sender, DirectoryDeletedEventArgs e)
@@ -29,7 +29,7 @@ namespace SSFModManager
             lock (Lock)
             {
                 var modDir = new DirectoryInfo(e.FilePath);
-                var mod = MainForm.Game.Mods.SingleOrDefault(m => m.Id == modDir.Name);
+                var mod = MainForm.Game.Mods.SingleOrDefault(m => m.Name == modDir.Name);
                 if (mod != null)
                 {
                     MainForm.Game.Mods.Remove(mod);
@@ -41,7 +41,7 @@ namespace SSFModManager
         private async void OnDirectoryCreatedEvent(object sender, DirectoryCreatedEventArgs e)
         {
             var modDir = new DirectoryInfo(e.FilePath);
-            var mod = new SSF.Mod(modDir, MainForm.Game);
+            var mod = new Teardown.Mod(MainForm.Game, modDir);
             await mod.UpdateModDetailsAsync(MainForm.webClient);
             MainForm.Game.Mods.Add(mod);
             MainForm.InitModList();

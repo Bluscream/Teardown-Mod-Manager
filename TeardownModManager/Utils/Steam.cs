@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using SSFModManager;
+using TeardownModManager;
 using Steam.Classes;
 using System;
 using System.Collections.Generic;
@@ -36,12 +36,15 @@ namespace Steam
         private static FileInfo cacheFile = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).CombineFile("steam.cache.json");
         private static Cache cache;
 
-        public static async Task<GetPublishedFileDetailsResponse> GetPublishedFileDetailsAsync(HttpClient webClient, SSF.Mod Mod) => await GetPublishedFileDetailsAsync(webClient, Mod.Id);
+
+        public static async Task<GetPublishedFileDetailsResponse> GetPublishedFileDetailsAsync(HttpClient webClient, Teardown.Mod Mod) => await GetPublishedFileDetailsAsync(webClient, Mod.SteamWorkshopId);
 
         public static async Task<GetPublishedFileDetailsResponse> GetPublishedFileDetailsAsync(HttpClient webClient, string fileId) => await GetPublishedFileDetailsAsync(webClient, new List<string>() { fileId });
 
         public static async Task<GetPublishedFileDetailsResponse> GetPublishedFileDetailsAsync(HttpClient webClient, List<string> fileIds)
         {
+            fileIds.RemoveAll(id => string.IsNullOrWhiteSpace(id));
+            fileIds.Remove("0");
             var parsedResponse = new GetPublishedFileDetailsResponse();
             if (fileIds.Count < 1) return parsedResponse;
             CheckCache();
@@ -73,11 +76,13 @@ namespace Steam
             var responseString = await response.Content.ReadAsStringAsync();
             try { parsedResponse = JsonConvert.DeserializeObject<GetPublishedFileDetailsResponse>(responseString); }
             catch (Exception ex) { Console.WriteLine($"[Steam] Could not deserialize response ({ex.Message})\n{responseString}"); } // {response.ReasonPhrase} ({response.StatusCode})\n
-
-            foreach (var item in parsedResponse.response.publishedfiledetails)
+            if (parsedResponse != null)
             {
-                cache.FileDetails.RemoveAll(x => x.publishedfileid == item.publishedfileid);
-                cache.FileDetails.Add(CacheFileDetail.FromPublishedfiledetail(item));
+                foreach (var item in parsedResponse.response.publishedfiledetails)
+                {
+                    cache.FileDetails.RemoveAll(x => x.publishedfileid == item.publishedfileid);
+                    cache.FileDetails.Add(CacheFileDetail.FromPublishedfiledetail(item));
+                }
             }
             File.WriteAllText(cacheFile.FullName, JsonConvert.SerializeObject(cache));
             return parsedResponse;
