@@ -88,7 +88,6 @@ namespace TeardownModManager
 
                 foreach (var tag in mod.Tags)
                     tags.Add(tag);
-
             }
 
             foreach (var tag in tags.OrderBy(t => t).ToList())
@@ -97,7 +96,6 @@ namespace TeardownModManager
 
                 foreach (var mod in Game.Mods)
                     if (mod.Tags != null && mod.Tags.Contains(tag)) count += 1;
-
 
                 var text = $"{tag}";
                 if (count > 0) text += $" ({count})";
@@ -119,7 +117,6 @@ namespace TeardownModManager
 
                 foreach (var mod in Game.Mods.ToList())
                     if (mod.Tags != null && mod.Tags.Contains(text)) modsInCategory.Add(mod);
-
             } // modsInCategory = Game.Mods.Where(m => m.Tags.Contains(text)).ToList();
             else modsInCategory = Game.Mods;
 
@@ -173,7 +170,6 @@ namespace TeardownModManager
             // Dictionary<string, object> modDictionary = mod.ToDictionary();
             foreach (var item in modDictionary)
                 FillModPart(item);
-
         }
 
         void FillModPart(KeyValuePair<string, object> item, GroupBox parent = null)
@@ -214,8 +210,10 @@ namespace TeardownModManager
                 if (as_enumerable is null && as_dictionary is null)
                 {
                     var box = new GroupBox() { Text = labelText };
+
                     box.Controls
                         .Add(new TextBox() { Text = item.Value.ToJson(), ReadOnly = true, Multiline = true, Dock = DockStyle.Fill });
+
                     add_to.Controls.Add(box);
                 }
                 else
@@ -287,7 +285,6 @@ namespace TeardownModManager
             {
                 foreach (var proc in Game.Processes)
                     if (!proc.HasExited) proc.Kill();
-
             }
 
             return true;
@@ -308,7 +305,6 @@ namespace TeardownModManager
         {
             foreach (var proc in Game.Processes)
                 if (!proc.HasExited) proc.Kill();
-
 
             MessageBox.Show($"Killed {Game.Processes.Where(p => p.HasExited).Count()} / {Game.Processes.Count} processes");
         }
@@ -357,79 +353,79 @@ namespace TeardownModManager
     }
 }
 /*
- *         private async void users_node_selectedAsync(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            if (e.Node.Text == "Me") {
-                FillMe(); return;
-            }
-            if (e.Button == MouseButtons.Left)
-            {
-                if (e.Node.Text == "Offline") {
-                    FillOfflineFriends(); return;
-                } else if (e.Node.Text == "Outgoing") {
-                    FillOutgoingRequests(); return;
-                }
-                if (!(e.Node.Tag is TreeNodeTag tag)) return;
-                // Logger.Warn(tag.ToJson());
-                if (tag.userResponse != null) { FillUser(tag.userResponse); return; }
-                else if (tag.userBriefResponse != null) { FillUser(tag.userBriefResponse); return; }
-                else if (tag.Type == NodeType.Notification) {
-                    var id = "";
-                    if (tag.notificationResponse.ReceiverUserId == me.id) id = tag.notificationResponse.SenderUserId;
-                    else if (tag.notificationResponse.SenderUserId == me.id) id = tag.notificationResponse.ReceiverUserId;
-                    if (string.IsNullOrEmpty(id)) return;
-                    var user = await vrcapi.UserApi.GetById(id); tag.userBriefResponse = user; e.Node.Tag = tag; FillUser(user); return;
-                } else if (tag.Type == NodeType.Moderation) {
-                    var id = "";
-                    if (tag.playerModeratedResponse.targetUserId == me.id) { id = tag.playerModeratedResponse.sourceUserId; }
-                    else if (tag.playerModeratedResponse.sourceUserId == me.id) { id = tag.playerModeratedResponse.targetUserId; }
-                    if (string.IsNullOrEmpty(id)) return;
-                    var user = await vrcapi.UserApi.GetById(id); tag.userBriefResponse = user; e.Node.Tag = tag; FillUser(user); return;
-                }
-            } else if (e.Button == MouseButtons.Right) {
-                if (Program.Arguments.Launcher.Verbose.IsTrue) { // Todo Change
-                    for (int i = 0; i < menu_users.Items.Count; i++) {
-                        Logger.Trace(i, menu_users.Items[i].Text);
-                    }
-                }
-                tree_users.SelectedNode = e.Node;
-                for (int i = 0; i < menu_users.Items.Count; i++) { menu_users.Items[i].Visible = false; }
-                if (e.Node.Nodes.Count > 0 || e.Node.Index == 0) menu_users.Items[10].Visible = true; // Refresh
-                if(e.Node.Text.StartsWith("Friends ("))
-                {
-                    menu_users.Items[5].Visible = true; menu_users.Items[6].Visible = true; // Import/Export
-                    menu_users.Items[12].Visible = true; // Discord Names
-                }
-                else if(e.Node.Tag != null)
-                {
-                    var tag = (TreeNodeTag)tree_users.SelectedNode.Tag;
-                    if (tag.Type == NodeType.Me || tag.Type == NodeType.User || tag.Type == NodeType.Moderation || tag.Type == NodeType.Notification) {
-                        if (tag.Type == NodeType.Me) {
-                            menu_users.Items[11].Visible = true; // Set Status
-                        }
-                        // if(tag.notificationResponse != null && tag.notificationResponse.)
-                        if (!me.friends.Contains(tag.Id)) { menu_users.Items[1].Visible = true; // Unfriend
-                        } else {
-                            menu_users.Items[2].Visible = true; //Friend
-                    }
-                        var isBlocked = false;
-                        if (tag.Type != NodeType.Moderation) { // Todo: proper implementation
-                            foreach (TreeNode node in tree_users.Nodes[2].Nodes)
-                            {
-                                var nodetag = (TreeNodeTag)node.Tag;
-                                if (nodetag.playerModeratedResponse.targetUserId == tag.Id) { isBlocked = true; break; }
-                            }
-                        } else { isBlocked = true; }
-                        if (isBlocked) menu_users.Items[4].Visible = true; // Unblock
-                        else { menu_users.Items[3].Visible = true; /*Block}
-                        menu_users.Items[0].Visible = true; // Profile
-                        menu_users.Items[7].Visible = true; // Message
-                        menu_users.Items[8].Visible = true; // Invite
-                        menu_users.Items[9].Visible = true; // Chat
-                    }
-                }
-                // if (menu_users.Items.Cast<ToolStripMenuItem>().ToList().Any(p => p.Visible))
-                    menu_users.Show(tree_users, e.Location);
-            }
-        }
-        */
+*         private async void users_node_selectedAsync(object sender, TreeNodeMouseClickEventArgs e)
+      {
+          if (e.Node.Text == "Me") {
+              FillMe(); return;
+          }
+          if (e.Button == MouseButtons.Left)
+          {
+              if (e.Node.Text == "Offline") {
+                  FillOfflineFriends(); return;
+              } else if (e.Node.Text == "Outgoing") {
+                  FillOutgoingRequests(); return;
+              }
+              if (!(e.Node.Tag is TreeNodeTag tag)) return;
+              // Logger.Warn(tag.ToJson());
+              if (tag.userResponse != null) { FillUser(tag.userResponse); return; }
+              else if (tag.userBriefResponse != null) { FillUser(tag.userBriefResponse); return; }
+              else if (tag.Type == NodeType.Notification) {
+                  var id = "";
+                  if (tag.notificationResponse.ReceiverUserId == me.id) id = tag.notificationResponse.SenderUserId;
+                  else if (tag.notificationResponse.SenderUserId == me.id) id = tag.notificationResponse.ReceiverUserId;
+                  if (string.IsNullOrEmpty(id)) return;
+                  var user = await vrcapi.UserApi.GetById(id); tag.userBriefResponse = user; e.Node.Tag = tag; FillUser(user); return;
+              } else if (tag.Type == NodeType.Moderation) {
+                  var id = "";
+                  if (tag.playerModeratedResponse.targetUserId == me.id) { id = tag.playerModeratedResponse.sourceUserId; }
+                  else if (tag.playerModeratedResponse.sourceUserId == me.id) { id = tag.playerModeratedResponse.targetUserId; }
+                  if (string.IsNullOrEmpty(id)) return;
+                  var user = await vrcapi.UserApi.GetById(id); tag.userBriefResponse = user; e.Node.Tag = tag; FillUser(user); return;
+              }
+          } else if (e.Button == MouseButtons.Right) {
+              if (Program.Arguments.Launcher.Verbose.IsTrue) { // Todo Change
+                  for (int i = 0; i < menu_users.Items.Count; i++) {
+                      Logger.Trace(i, menu_users.Items[i].Text);
+                  }
+              }
+              tree_users.SelectedNode = e.Node;
+              for (int i = 0; i < menu_users.Items.Count; i++) { menu_users.Items[i].Visible = false; }
+              if (e.Node.Nodes.Count > 0 || e.Node.Index == 0) menu_users.Items[10].Visible = true; // Refresh
+              if(e.Node.Text.StartsWith("Friends ("))
+              {
+                  menu_users.Items[5].Visible = true; menu_users.Items[6].Visible = true; // Import/Export
+                  menu_users.Items[12].Visible = true; // Discord Names
+              }
+              else if(e.Node.Tag != null)
+              {
+                  var tag = (TreeNodeTag)tree_users.SelectedNode.Tag;
+                  if (tag.Type == NodeType.Me || tag.Type == NodeType.User || tag.Type == NodeType.Moderation || tag.Type == NodeType.Notification) {
+                      if (tag.Type == NodeType.Me) {
+                          menu_users.Items[11].Visible = true; // Set Status
+                      }
+                      // if(tag.notificationResponse != null && tag.notificationResponse.)
+                      if (!me.friends.Contains(tag.Id)) { menu_users.Items[1].Visible = true; // Unfriend
+                      } else {
+                          menu_users.Items[2].Visible = true; //Friend
+                  }
+                      var isBlocked = false;
+                      if (tag.Type != NodeType.Moderation) { // Todo: proper implementation
+                          foreach (TreeNode node in tree_users.Nodes[2].Nodes)
+                          {
+                              var nodetag = (TreeNodeTag)node.Tag;
+                              if (nodetag.playerModeratedResponse.targetUserId == tag.Id) { isBlocked = true; break; }
+                          }
+                      } else { isBlocked = true; }
+                      if (isBlocked) menu_users.Items[4].Visible = true; // Unblock
+                      else { menu_users.Items[3].Visible = true; /*Block}
+                      menu_users.Items[0].Visible = true; // Profile
+                      menu_users.Items[7].Visible = true; // Message
+                      menu_users.Items[8].Visible = true; // Invite
+                      menu_users.Items[9].Visible = true; // Chat
+                  }
+              }
+              // if (menu_users.Items.Cast<ToolStripMenuItem>().ToList().Any(p => p.Visible))
+                  menu_users.Show(tree_users, e.Location);
+          }
+      }
+      */

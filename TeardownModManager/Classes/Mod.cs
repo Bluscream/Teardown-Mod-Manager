@@ -97,14 +97,12 @@ namespace Teardown
             {
                 foreach (var tag in ModInfoFile.Tags)
                     Tags.Add(tag);
-
             }
 
             if (Details != null && Details.tags is null)
             {
                 foreach (var tag in Details.tags)
                     Tags.Add(tag.tag);
-
             }
 
             Utils.Logger.Debug($"New Mod: {this.ToJson(true)}");

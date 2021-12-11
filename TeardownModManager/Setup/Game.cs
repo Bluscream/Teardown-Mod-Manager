@@ -121,7 +121,6 @@ namespace TeardownModManager.Setup
                 if (folder) found = FindFolder();
                 else found = FindFile();
 
-
             return found == string.Empty ? null : new DirectoryInfo(found);
         }
 

@@ -81,7 +81,6 @@ namespace Teardown
 
                 Mods.AddRange(LoadMods(modDir.Value, modDir.Key));
 
-
             Utils.Logger.Info(Mods.ToJson(true));
         }
 
